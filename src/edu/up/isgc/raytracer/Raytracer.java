@@ -29,7 +29,7 @@ public class Raytracer {
         Scene scene01 = new Scene();
         scene01.setCamera(new Camera(new Vector3D(0, 0, -8), 160, 160, 800, 800, 0f, 50f));
         scene01.addLight(new DirectionalLight(Vector3D.ZERO(), new Vector3D(0.0, -0.5, 1.0), Color.WHITE, 1.8));
-        //scene01.addLight(new PointLight(new Vector3D(2f,-1.0f,0.5f), Color.WHITE,0.8));
+        //scene01.addLight(new PointLight(new Vector3D(0f,1.0f,0.5f), Color.WHITE,1.8));
         //scene01.addObject(new Sphere(new Vector3D(0f, 1f, 5f), 0.5f, Color.RED));
         //scene01.addObject(new Sphere(new Vector3D(0.5f, 1f, 4.5f), 0.25f, new Color(200, 255, 0)));
         //scene01.addObject(new Sphere(new Vector3D(0.35f, 1f, 4.5f), 0.3f, Color.BLUE));
@@ -40,7 +40,7 @@ public class Raytracer {
         //scene01.addObject(OBJReader.GetPolygon("Cube.obj", new Vector3D(0f, -2.5f, 1f), Color.WHITE));
         //scene01.addObject(OBJReader.GetPolygon("CubeQuad.obj", new Vector3D(-3f, -2.5f, 3f), Color.GREEN));
         scene01.addObject(OBJReader.GetPolygon("SmallTeapot.obj", new Vector3D(1f, -2.0f, 1.5f), Color.BLUE));
-        //scene01.addObject(OBJReader.GetPolygon("Ring.obj", new Vector3D(2f, -1.0f, 1.5f), Color.BLUE));
+        //scene01.addObject(OBJReader.GetPolygon("Ring.obj", new Vector3D(1f, -2.0f, 1.5f), Color.BLUE));
         //scene01.addObject(OBJReader.GetPolygon("Shrek.obj", new Vector3D(4f,-60f, 190f), Color.GREEN));
 
         BufferedImage image = raytrace(scene01);
@@ -76,9 +76,12 @@ public class Raytracer {
                 if (closestIntersection != null) {
                     pixelColor = Color.BLACK;
                     for (Light light : lights) {
+                        Ray shadowRay = new Ray(closestIntersection.getPosition(), Vector3D.substract(light.getPosition(),closestIntersection.getPosition()));
+                        Intersection shadow = raycast(shadowRay, objects, closestIntersection.getObject(), new float[]{cameraZ + nearFarPlanes[0], cameraZ + nearFarPlanes[1]});
                         float nDotL = light.getNDotL(closestIntersection);
                         float intensity = (float) light.getIntensity() * nDotL;
-                        float lightRange = intensity / (float) Math.pow(Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition())),2) ;
+                        float lightRange = intensity / (float) Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition()));
+                        //float lightRange = intensity / (float) Math.pow(Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition())),2) ;
                         Color lightColor = light.getColor();
                         Color objColor = closestIntersection.getObject().getColor();
                         float[] lightColors = new float[]{lightColor.getRed() / 255.0f, lightColor.getGreen() / 255.0f, lightColor.getBlue() / 255.0f};
@@ -87,6 +90,9 @@ public class Raytracer {
                             objColors[colorIndex] *= lightRange * lightColors[colorIndex];
                         }
                         Color diffuse = new Color(clamp(objColors[0], 0, 1),clamp(objColors[1], 0, 1),clamp(objColors[2], 0, 1));
+                        if (shadow != null){
+                            diffuse = Color.BLACK;
+                        }
                         pixelColor = addColor(pixelColor, diffuse);
                     }
                 }
