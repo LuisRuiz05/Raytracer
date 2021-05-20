@@ -28,13 +28,13 @@ public class Raytracer {
         System.out.println(new Date());
         Scene scene01 = new Scene();
         scene01.setCamera(new Camera(new Vector3D(0, 0, -8), 160, 160, 800, 800, 0f, 50f));
-        scene01.addLight(new DirectionalLight(Vector3D.ZERO(), new Vector3D(0.0, -0.5, 1.0), Color.WHITE, 1.8));
-        //scene01.addLight(new PointLight(new Vector3D(0f,1.0f,0.5f), Color.WHITE,1.8));
-        //scene01.addObject(new Sphere(new Vector3D(0f, 1f, 5f), 0.5f, Color.RED));
-        //scene01.addObject(new Sphere(new Vector3D(0.5f, 1f, 4.5f), 0.25f, new Color(200, 255, 0)));
-        //scene01.addObject(new Sphere(new Vector3D(0.35f, 1f, 4.5f), 0.3f, Color.BLUE));
-        //scene01.addObject(new Sphere(new Vector3D(4.85f, 1f, 4.5f), 0.3f, Color.PINK));
-        //scene01.addObject(new Sphere(new Vector3D(2.85f, 1f, 304.5f), 0.5f, Color.BLUE));
+        //scene01.addLight(new DirectionalLight(Vector3D.ZERO(), new Vector3D(0.0, -0.5, 1.0), Color.WHITE, 1.8));
+        scene01.addLight(new PointLight(new Vector3D(0f,1.0f,0.5f), Color.WHITE,1.8));
+        scene01.addObject(new Sphere(new Vector3D(0f, 1f, 5f), 0.5f, Color.RED));
+        scene01.addObject(new Sphere(new Vector3D(0.5f, 1f, 4.5f), 0.25f, new Color(200, 255, 0)));
+        scene01.addObject(new Sphere(new Vector3D(0.35f, 1f, 4.5f), 0.3f, Color.BLUE));
+        scene01.addObject(new Sphere(new Vector3D(4.85f, 1f, 4.5f), 0.3f, Color.PINK));
+        scene01.addObject(new Sphere(new Vector3D(2.85f, 1f, 304.5f), 0.5f, Color.BLUE));
         scene01.addObject(new Polygon(new Vector3D(0f, -2f, 0f), new Triangle[]{new Triangle(new Vector3D(10f,0f,10f), new Vector3D(-10f,0f,10f), new Vector3D(-10f,0f,-10f)),
                 new Triangle(new Vector3D(-10f,0f,-10f), new Vector3D(10f,0f,-10f), new Vector3D(10f,0f,10f))}, Color.WHITE));
         //scene01.addObject(OBJReader.GetPolygon("Cube.obj", new Vector3D(0f, -2.5f, 1f), Color.WHITE));
@@ -82,12 +82,16 @@ public class Raytracer {
                         float intensity = (float) light.getIntensity() * nDotL;
                         float lightRange = intensity / (float) Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition()));
                         //float lightRange = intensity / (float) Math.pow(Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition())),2) ;
+                        double specular = specular(closestIntersection, ray, light);
                         Color lightColor = light.getColor();
                         Color objColor = closestIntersection.getObject().getColor();
                         float[] lightColors = new float[]{lightColor.getRed() / 255.0f, lightColor.getGreen() / 255.0f, lightColor.getBlue() / 255.0f};
                         float[] objColors = new float[]{objColor.getRed() / 255.0f, objColor.getGreen() / 255.0f, objColor.getBlue() / 255.0f};
                         for (int colorIndex = 0; colorIndex < objColors.length; colorIndex++) {
                             objColors[colorIndex] *= lightRange * lightColors[colorIndex];
+                            if (specular > 0) {
+                                objColors[colorIndex] += lightColors[colorIndex] * specular;
+                            }
                         }
                         Color diffuse = new Color(clamp(objColors[0], 0, 1),clamp(objColors[1], 0, 1),clamp(objColors[2], 0, 1));
                         if (shadow != null){
@@ -138,7 +142,29 @@ public class Raytracer {
                 }
             }
         }
-
         return closestIntersection;
+    }
+
+    public static double specular(Intersection intersection, Ray ray, Light light){
+        Vector3D lightDirection;
+        if (light instanceof DirectionalLight) {
+            lightDirection = Vector3D.normalize(((DirectionalLight) light).getDirection());
+        } else {
+            lightDirection = Vector3D.normalize(((PointLight) light).getDirection(intersection));
+        }
+        Vector3D viewDirection = Vector3D.normalize(ray.getDirection());
+
+        Vector3D lightSourceViewer = Vector3D.normalize(Vector3D.add(viewDirection, lightDirection));
+        Vector3D halfVector = Vector3D.normalize(Vector3D.scalarMultiplication(lightSourceViewer,1/Vector3D.magnitude(lightSourceViewer)));
+
+        double nDotH = Vector3D.dotProduct(intersection.getNormal(), halfVector);
+        double specular = Math.pow(nDotH, 1);
+
+        //System.out.println(nDotH);
+
+        if (nDotH > 0){
+            return specular;
+        }
+            return 0;
     }
 }

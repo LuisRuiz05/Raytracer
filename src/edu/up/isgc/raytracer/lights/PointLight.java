@@ -17,6 +17,11 @@ public class PointLight extends Light {
         super(position, color, intensity);
     }
 
+    public Vector3D getDirection(Intersection intersection) {
+        Vector3D direction = Vector3D.substract(getPosition(), intersection.getPosition());
+        return direction;
+    }
+
     @Override
     public float getNDotL(Intersection intersection) {
         return (float) Math.max(Vector3D.dotProduct(intersection.getNormal(),
