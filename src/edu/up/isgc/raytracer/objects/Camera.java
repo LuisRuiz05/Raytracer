@@ -8,6 +8,7 @@ import edu.up.isgc.raytracer.Intersection;
 import edu.up.isgc.raytracer.Ray;
 import edu.up.isgc.raytracer.Vector3D;
 import edu.up.isgc.raytracer.objects.Object3D;
+import edu.up.isgc.raytracer.tools.Material;
 
 import java.awt.*;
 
@@ -23,9 +24,10 @@ public class Camera extends Object3D {
     // 1 is height
     private int[] resolution;
     private float[] nearFarPlanes = new float[2];
+    private static Material material = new Material(0,0,0,0,0);
 
     public Camera(Vector3D position, float fieldOfViewHorizontal, float fieldOfViewVertical, int widthResolution, int heightResolution, float nearPlane, float farPlane) {
-        super(position, Color.black);
+        super(position, Color.black, material);
         setFieldOfViewHorizontal(fieldOfViewHorizontal);
         setFieldOfViewVertical(fieldOfViewVertical);
         setResolution(new int[]{widthResolution, heightResolution});

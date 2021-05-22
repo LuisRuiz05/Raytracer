@@ -8,6 +8,7 @@ import edu.up.isgc.raytracer.Intersection;
 import edu.up.isgc.raytracer.Ray;
 import edu.up.isgc.raytracer.Vector3D;
 import edu.up.isgc.raytracer.objects.Object3D;
+import edu.up.isgc.raytracer.tools.Material;
 
 import java.awt.*;
 
@@ -17,9 +18,10 @@ import java.awt.*;
  */
 public abstract class Light extends Object3D {
     private double intensity;
+    private static Material material = new Material(0,0,0,0,0);
 
     public Light(Vector3D position, Color color, double intensity){
-        super(position, color);
+        super(position, color, material);
         setIntensity(intensity);
     }
 
