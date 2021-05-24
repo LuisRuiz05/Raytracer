@@ -24,7 +24,7 @@ public class Camera extends Object3D {
     // 1 is height
     private int[] resolution;
     private float[] nearFarPlanes = new float[2];
-    private static Material material = new Material(0,0,0,0,0);
+    private static Material material = new Material(0,0,0,false,false);
 
     public Camera(Vector3D position, float fieldOfViewHorizontal, float fieldOfViewVertical, int widthResolution, int heightResolution, float nearPlane, float farPlane) {
         super(position, Color.black, material);

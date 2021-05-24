@@ -5,12 +5,11 @@ import java.awt.*;
 public class Material {
         private double ambient;
         private double shininess;
-        private double specular;
         private double diffuse;
-        private double reflection;
-        private double refraction;
+        private boolean reflection;
+        private boolean refraction;
 
-        public Material(double ambient, double shininess, double diffuse, double reflection, double refraction){
+        public Material(double ambient, double shininess, double diffuse, boolean reflection, boolean refraction){
             setAmbient(ambient);
             setShininess(shininess);
             setDiffuse(diffuse);
@@ -42,19 +41,19 @@ public class Material {
         this.diffuse = diffuse;
     }
 
-    public double getReflection() {
+    public boolean getReflection() {
         return reflection;
     }
 
-    public void setReflection(double reflection) {
+    public void setReflection(boolean reflection) {
         this.reflection = reflection;
     }
 
-    public double getRefraction() {
+    public boolean getRefraction() {
         return refraction;
     }
 
-    public void setRefraction(double refraction) {
+        public void setRefraction(boolean refraction) {
         this.refraction = refraction;
     }
 }

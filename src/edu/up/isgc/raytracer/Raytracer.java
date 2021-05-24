@@ -17,6 +17,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.sql.NClob;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -29,14 +30,15 @@ public class Raytracer {
     public static void main(String[] args) {
         System.out.println(new Date());
         Scene scene01 = new Scene();
+
         scene01.setCamera(new Camera(new Vector3D(0, 0, -8), 160, 160, 800, 800, 0f, 30f));
-        //scene01.addLight(new DirectionalLight(Vector3D.ZERO(), new Vector3D(0.0, 2.5, -10), Color.WHITE, 4.4));
-        scene01.addLight(new PointLight(new Vector3D(0f,0.5f,-1f), Color.WHITE, 1.8));
-        //scene01.addObject(new Sphere(new Vector3D(-2.5f, 0.5f, 2f), 0.9f, Color.GREEN));
+        //scene01.addLight(new DirectionalLight(Vector3D.ZERO(), new Vector3D(0, 1.5, -20), Color.WHITE, 0.05));
+        scene01.addLight(new PointLight(new Vector3D(0f,-0.5f,-0.5f), Color.WHITE, 1.8));
         scene01.addObject(new Polygon(new Vector3D(0f, -2f, 0f), new Triangle[]{new Triangle(new Vector3D(10f,0f,10f), new Vector3D(-10f,0f,10f), new Vector3D(-10f,0f,-10f)),
-                new Triangle(new Vector3D(-10f,0f,-10f), new Vector3D(10f,0f,-10f), new Vector3D(10f,0f,10f))}, Color.GRAY, new Material(0.05,5,1,1,1)));
-        scene01.addObject(OBJReader.GetPolygon("SmallTeapot.obj", new Vector3D(0f, -1.7f, 1.5f), Color.RED,new Material(0.3,0.8,0.6,1,1)));
-        //scene01.addObject(OBJReader.GetPolygon("Ring.obj", new Vector3D(0f, -1.7f, 1.5f), Color.ORANGE));
+                new Triangle(new Vector3D(-10f,0f,-10f), new Vector3D(10f,0f,-10f), new Vector3D(10f,0f,10f))}, Color.GRAY, new Material(0.05,5,1,true,false)));
+        scene01.addObject(OBJReader.GetPolygon("SmallTeapot.obj", new Vector3D(0f, -1.7f, 1.5f), Color.RED,new Material(0.3,0.5,0.4,true,false)));
+        scene01.addObject(OBJReader.GetPolygon("Ring.obj", new Vector3D(0f, -1.7f, 1.5f), Color.ORANGE, new Material(0.3,0.5,0.4,true,false)));
+
         BufferedImage image = raytrace(scene01);
         File outputImage = new File("image.png");
         try {
@@ -69,13 +71,22 @@ public class Raytracer {
                 Color pixelColor = Color.BLACK;
                 if (closestIntersection != null) {
                     pixelColor = Color.BLACK;
+                    //Reflection
+                    if (closestIntersection.getObject().getMaterial().getReflection() == true){
+                        int timesReflected = 0;
+                        Intersection reflection = reflection(closestIntersection, objects, mainCamera, timesReflected);
+                        if (reflection != null){
+                            closestIntersection = reflection;
+                        }
+                    }
+                    //Check lights
                     for (Light light : lights) {
                         Ray shadowRay = new Ray(closestIntersection.getPosition(), Vector3D.substract(light.getPosition(),closestIntersection.getPosition()));
                         Intersection shadow = raycast(shadowRay, objects, closestIntersection.getObject(), new float[]{cameraZ + nearFarPlanes[0], cameraZ + nearFarPlanes[1]});
                         float nDotL = light.getNDotL(closestIntersection);
                         float intensity = (float) light.getIntensity() * nDotL;
-                        float lightRange = intensity / (float) Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition()));
-                        //float lightRange = intensity / (float) Math.pow(Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition())),2) ;
+                        float falloff = intensity / (float) Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition()));
+                        //float falloff = intensity / (float) Math.pow(Vector3D.magnitude(Vector3D.substract(closestIntersection.getPosition(),light.getPosition())),2) ;
                         double ambient = closestIntersection.getObject().getMaterial().getAmbient();
                         double specular = specular(closestIntersection, ray, light);
                         Color lightColor = light.getColor();
@@ -84,7 +95,7 @@ public class Raytracer {
                         float[] lightColors = new float[]{(lightColor.getRed() / 255.0f)*objDiffuse, (lightColor.getGreen() / 255.0f)*objDiffuse, (lightColor.getBlue() / 255.0f)*objDiffuse};
                         float[] objColors = new float[]{objColor.getRed() / 255.0f, objColor.getGreen() / 255.0f, objColor.getBlue() / 255.0f};
                         for (int colorIndex = 0; colorIndex < objColors.length; colorIndex++) {
-                            objColors[colorIndex] *= (lightRange+specular+ambient) * lightColors[colorIndex];
+                            objColors[colorIndex] *= (falloff+specular+ambient) * lightColors[colorIndex];
                         }
                         Color diffuse = new Color(clamp(objColors[0], 0, 1),clamp(objColors[1], 0, 1),clamp(objColors[2], 0, 1));
                         if (shadow != null){
@@ -159,10 +170,28 @@ public class Raytracer {
             return 0;
     }
 
-    public static Intersection reflection(Intersection intersection, ArrayList<Object3D> objects, Camera camera){
-        float reflection = 2;
-        if (reflection > 0){
-            //refleja();
+    public static Intersection reflection(Intersection intersection, ArrayList<Object3D> objects, Camera camera, int timesReflected){
+        boolean objectReflection = intersection.getObject().getMaterial().getReflection();
+        float cameraZ = (float) camera.getPosition().getZ();
+        float[] nearFarPlanes = camera.getNearFarPlanes();
+        if (objectReflection == true && timesReflected <= 3) {
+            Vector3D normal = intersection.getNormal();
+            Vector3D view = Vector3D.substract(intersection.getPosition(), camera.getPosition());
+            Vector3D reflectionDirection = Vector3D.add(Vector3D.scalarMultiplication(Vector3D.scalarMultiplication(normal, -2), Vector3D.dotProduct(normal, view)), view);
+            Ray reflection = new Ray(intersection.getPosition(), reflectionDirection);
+
+            for (Object3D object : objects){
+                if (!object.equals(intersection.getObject())) {
+                    Intersection reflectionIntersection = raycast(reflection, objects, intersection.getObject(), new float[]{cameraZ + nearFarPlanes[0], cameraZ + nearFarPlanes[1]});
+                    //Recursive reflection
+                    if (reflectionIntersection == null) {
+                        return intersection;
+                    }
+                    else {
+                        return reflection(reflectionIntersection, objects, camera, timesReflected+1);
+                    }
+                }
+            }
         }
         return intersection;
     }

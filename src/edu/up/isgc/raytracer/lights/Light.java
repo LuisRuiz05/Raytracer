@@ -18,7 +18,7 @@ import java.awt.*;
  */
 public abstract class Light extends Object3D {
     private double intensity;
-    private static Material material = new Material(0,0,0,0,0);
+    private static Material material = new Material(0,0,0,false,false);
 
     public Light(Vector3D position, Color color, double intensity){
         super(position, color, material);
