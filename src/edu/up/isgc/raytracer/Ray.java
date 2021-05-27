@@ -5,8 +5,10 @@
 package edu.up.isgc.raytracer;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * All instantiated objects of this class goes through each pixel of the scene to detect collisions,
+ * generate shadows, reflection, refraction, etc.
  */
 public class Ray {
 

@@ -11,6 +11,7 @@ import edu.up.isgc.raytracer.Vector3D;
 
 /**
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
  */
 public class Triangle implements IIntersectable {
 
@@ -94,7 +95,6 @@ public class Triangle implements IIntersectable {
     }
 
     /**
-     *
      * @see <a href="https://cadxfem.org/inf/Fast%20MinimumStorage%20RayTriangle%20Intersection.pdf">Moller-Trumbore intersection algorithm</a>
      */
     @Override

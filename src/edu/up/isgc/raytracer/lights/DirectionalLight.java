@@ -12,10 +12,17 @@ import java.awt.*;
 /**
  *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class instantiates a light whose direction can be manipulated by the user.
  */
 public class DirectionalLight extends Light {
     private Vector3D direction;
-
+    /**
+     * @param position takes the origin position of the light.
+     * @param direction receives a vector that will indicate the direction of the light.
+     * @param color receives an RGB color that will be applied to the light.
+     * @param intensity tells how strong will the light flash in scene.
+     */
     public DirectionalLight(Vector3D position, Vector3D direction, Color color, double intensity){
         super(position, color, intensity);
         setDirection(Vector3D.normalize(direction));

@@ -1,7 +1,15 @@
+/**
+ * [1968] - [2021] Centros Culturales de Mexico A.C / Universidad Panamericana
+ * All Rights Reserved.
+ */
 package edu.up.isgc.raytracer.tools;
 
 import java.awt.*;
 
+/**
+ * @author Luis Ruiz
+ * This method defines specific object's information for posterior rendering work
+ */
 public class Material {
         private double ambient;
         private double shininess;
@@ -9,6 +17,13 @@ public class Material {
         private boolean reflection;
         private boolean refraction;
 
+    /**
+     * @param ambient receives an ambient coefficient.
+     * @param shininess receives a small value which will be used for metallic-like renders.
+     * @param diffuse receives a diffuse coefficient.
+     * @param reflection tells if this is a reflective object.
+     * @param refraction tells if this is a refractive object.
+     */
         public Material(double ambient, double shininess, double diffuse, boolean reflection, boolean refraction){
             setAmbient(ambient);
             setShininess(shininess);

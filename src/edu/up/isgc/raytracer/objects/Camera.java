@@ -14,6 +14,8 @@ import java.awt.*;
 
 /**
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class simulates a camera that will receive and calculate all the render's information to represent it in every pixel.
  */
 public class Camera extends Object3D {
     // 0 is fovh
@@ -26,6 +28,15 @@ public class Camera extends Object3D {
     private float[] nearFarPlanes = new float[2];
     private static Material material = new Material(0,0,0,false,false);
 
+    /**
+     * @param position receives the position where the camera will be instantiated.
+     * @param fieldOfViewHorizontal receives the horizontal angle that will be rendered.
+     * @param fieldOfViewVertical receives the vertical angle that will be rendered.
+     * @param widthResolution receives the x resolution of the final render.
+     * @param heightResolution receives the y resolution of the final render.
+     * @param nearPlane receives the closest z position that will be rendered.
+     * @param farPlane receives the furthest z position that will be rendered.
+     */
     public Camera(Vector3D position, float fieldOfViewHorizontal, float fieldOfViewVertical, int widthResolution, int heightResolution, float nearPlane, float farPlane) {
         super(position, Color.black, material);
         setFieldOfViewHorizontal(fieldOfViewHorizontal);
@@ -82,6 +93,10 @@ public class Camera extends Object3D {
         return getResolution()[1];
     }
 
+    /**
+     * According on the field of view, this function calculates all the vectors in which the rays will collide.
+     * @return Vector3D[][] positions
+     */
     public Vector3D[][] calculatePositionsToRay() {
         float angleMaxX = 90 - (getFieldOfViewHorizontal() / 2f);
         float radiusMaxX = getDefaultZ() / (float) Math.cos(Math.toRadians(angleMaxX));

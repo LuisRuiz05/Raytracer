@@ -9,7 +9,9 @@ import edu.up.isgc.raytracer.objects.Triangle;
 
 /**
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
  * @see <a href="https://www.amazon.com/Real-Time-Collision-Detection-Interactive-Technology/dp/1558607323">Christer Ericson's Real-Time Collision Detection</a>
+ * This class calculates the barycentric coordiates for all the triangles, so the rendered colors get some smooth shading.
  */
 public class Barycentric {
 

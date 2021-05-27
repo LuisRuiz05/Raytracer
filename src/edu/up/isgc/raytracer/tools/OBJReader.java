@@ -22,9 +22,17 @@ import java.util.logging.Logger;
 
 /**
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This object reads the .obj file and proccess it's information for posterior rendering.
  */
 public abstract class OBJReader {
-
+    /**
+     * @param path takes the .obj's name.
+     * @param origin receives the position where the polygonal object will be instantiated.
+     * @param color receives an RGB color that will be applied to the polygon.
+     * @param material receives the render properties.
+     * @return
+     */
     public static Polygon GetPolygon(String path, Vector3D origin, Color color, Material material) {
         try {
             BufferedReader reader = new BufferedReader(new FileReader(path));

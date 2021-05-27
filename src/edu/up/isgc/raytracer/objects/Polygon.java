@@ -17,8 +17,9 @@ import java.util.List;
 import java.util.Set;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class calculates all barycentric coordinates and triangles from a polygon.
  */
 public class Polygon extends Object3D {
 
@@ -28,6 +29,12 @@ public class Polygon extends Object3D {
         return triangles;
     }
 
+    /**
+     * @param position receives the position where the polygonal object will be instantiated.
+     * @param triangles receives an array containing all the polygon's triangles.
+     * @param color receives an RGB color that will be applied to the polygon.
+     * @param material receives the render properties.
+     */
     public Polygon(Vector3D position, Triangle[] triangles, Color color, Material material){
         super(position, color, material);
         setTriangles(triangles);
@@ -49,6 +56,11 @@ public class Polygon extends Object3D {
         this.triangles = Arrays.asList(triangles);
     }
 
+    /**
+     * Tells if a ray crashes with the polygon and returns the intersection.
+     * @param ray
+     * return Intersection
+     */
     @Override
     public Intersection getIntersection(Ray ray) {
         double distance = -1;

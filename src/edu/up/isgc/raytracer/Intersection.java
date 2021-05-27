@@ -7,8 +7,9 @@ package edu.up.isgc.raytracer;
 import edu.up.isgc.raytracer.objects.Object3D;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class detects a collision with an object
  */
 public class Intersection {
 

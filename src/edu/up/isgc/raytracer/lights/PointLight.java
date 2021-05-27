@@ -11,8 +11,15 @@ import java.awt.*;
 
 /**
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class instantiates a light whose direction has already a defined distance.
  */
 public class PointLight extends Light {
+    /**
+     * @param position receives the position where the light will be instantiated.
+     * @param color receives an RGB color that will be applied to the light.
+     * @param intensity tells how strong will the light flash in scene.
+     */
     public PointLight(Vector3D position, Color color, double intensity) {
         super(position, color, intensity);
     }

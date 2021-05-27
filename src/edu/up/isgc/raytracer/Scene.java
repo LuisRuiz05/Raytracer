@@ -11,8 +11,9 @@ import edu.up.isgc.raytracer.objects.Object3D;
 import java.util.ArrayList;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class allows the user to build a scene for posterior render by including a camera, lights, objects, etc.
  */
 public class Scene {
 

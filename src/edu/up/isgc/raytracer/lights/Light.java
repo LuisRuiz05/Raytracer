@@ -15,8 +15,15 @@ import java.awt.*;
 /**
  *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class defines the basics for all the future inherited lights.
  */
 public abstract class Light extends Object3D {
+    /**
+     * @param position receives the position where the light will be instantiated.
+     * @param color receives an RGB color that will be applied to the light.
+     * @param intensity tells how strong will the light flash in scene.
+     */
     private double intensity;
     private static Material material = new Material(0,0,0,false,false);
 

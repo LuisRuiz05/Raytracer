@@ -11,9 +11,11 @@ import edu.up.isgc.raytracer.tools.Material;
 import java.awt.*;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class inherits all renderable classes.
  */
+
 public abstract class Object3D implements IIntersectable {
 
     private Vector3D position;

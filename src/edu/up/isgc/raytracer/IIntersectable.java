@@ -5,7 +5,6 @@
 package edu.up.isgc.raytracer;
 
 /**
- *
  * @author Jafet Rodríguez
  */
 public interface IIntersectable {

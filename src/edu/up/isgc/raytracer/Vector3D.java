@@ -5,8 +5,9 @@
 package edu.up.isgc.raytracer;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class defines the basic vector 3D operations.
  */
 public class Vector3D {
 

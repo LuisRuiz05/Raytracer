@@ -12,8 +12,9 @@ import edu.up.isgc.raytracer.tools.Material;
 import java.awt.*;
 
 /**
- *
  * @author Jafet Rodríguez
+ * @author Luis Ruiz
+ * This class generates a sphere object.
  */
 public class Sphere extends Object3D {
 
@@ -27,11 +28,22 @@ public class Sphere extends Object3D {
         this.radius = radius;
     }
 
+    /**
+     * @param position receives the position where the polygonal object will be instantiated.
+     * @param radius receives the radius for the generated sphere.
+     * @param color receives an RGB color that will be applied to the polygon.
+     * @param material receives the render properties.
+     */
     public Sphere(Vector3D position, float radius, Color color, Material material) {
         super(position, color, material);
         setRadius(radius);
     }
 
+    /**
+     * Tells if a ray crashes with the sphere and returns the intersection.
+     * @param ray
+     * return Intersection
+     */
     @Override
     public Intersection getIntersection(Ray ray) {
         double distance = -1;
